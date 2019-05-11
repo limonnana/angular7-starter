@@ -5,10 +5,9 @@ import { Subject } from 'rxjs';
 import { extract, I18nService } from './i18n.service';
 
 const defaultLanguage = 'en-US';
-const supportedLanguages = ['eo', 'en-US', 'fr-FR'];
+const supportedLanguages = ['eo', 'en-US', 'fr-FR', 'es-AR'];
 
 class MockTranslateService {
-
   currentLang = '';
   onLangChange = new Subject();
 
@@ -24,8 +23,7 @@ class MockTranslateService {
     return 'en-US';
   }
 
-  setTranslation(lang: string, translations: Object, shouldMerge?: boolean) { }
-
+  setTranslation(lang: string, translations: Object, shouldMerge?: boolean) {}
 }
 
 describe('I18nService', () => {
@@ -35,10 +33,7 @@ describe('I18nService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        I18nService,
-        { provide: TranslateService, useClass: MockTranslateService },
-      ]
+      providers: [I18nService, { provide: TranslateService, useClass: MockTranslateService }]
     });
 
     i18nService = TestBed.get(I18nService);
@@ -46,10 +41,9 @@ describe('I18nService', () => {
 
     // Create spies
     onLangChangeSpy = jasmine.createSpy('onLangChangeSpy');
-    translateService.onLangChange
-      .subscribe((event: LangChangeEvent) => {
-        onLangChangeSpy(event.lang);
-      });
+    translateService.onLangChange.subscribe((event: LangChangeEvent) => {
+      onLangChangeSpy(event.lang);
+    });
     spyOn(translateService, 'use').and.callThrough();
   });
 
@@ -141,5 +135,4 @@ describe('I18nService', () => {
       expect(currentLanguage).toEqual(defaultLanguage);
     });
   });
-
 });

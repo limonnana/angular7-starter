@@ -9,17 +9,20 @@ import { HttpCacheService } from './http-cache.service';
  * Use ExtendedHttpClient fluent API to configure caching for each request.
  */
 @Injectable()
-export class CacheInterceptor implements HttpInterceptor {
+export class CacheInterceptor {}
 
+/*
+@Injectable()
+export class CacheInterceptor implements HttpInterceptor {
   private forceUpdate = false;
 
-  constructor(private httpCacheService: HttpCacheService) { }
+  constructor(private httpCacheService: HttpCacheService) {}
 
   /**
    * Configures interceptor options
    * @param options If update option is enabled, forces request to be made and updates cache entry.
    * @return The configured instance.
-   */
+   *
   configure(options?: { update?: boolean } | null): CacheInterceptor {
     const instance = new CacheInterceptor(this.httpCacheService);
     if (options && options.update) {
@@ -40,19 +43,18 @@ export class CacheInterceptor implements HttpInterceptor {
         subscriber.next(new HttpResponse(cachedData as Object));
         subscriber.complete();
       } else {
-        next.handle(request)
-          .subscribe(
-            event => {
-              if (event instanceof HttpResponse) {
-                this.httpCacheService.setCacheData(request.urlWithParams, event);
-              }
-              subscriber.next(event);
-            },
-            error => subscriber.error(error),
-            () => subscriber.complete()
-          );
+        next.handle(request).subscribe(
+          event => {
+            if (event instanceof HttpResponse) {
+              this.httpCacheService.setCacheData(request.urlWithParams, event);
+            }
+            subscriber.next(event);
+          },
+          error => subscriber.error(error),
+          () => subscriber.complete()
+        );
       }
     });
   }
-
 }
+*/
