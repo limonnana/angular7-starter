@@ -8,6 +8,7 @@ import { Logger, I18nService, untilDestroyed } from '@app/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Credentials, CredentialsService } from '@app/core/';
+import { User } from '@app/entities/user';
 
 const log = new Logger('Login');
 
@@ -41,27 +42,29 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   login() {
     const context = this.loginForm.value;
+    const credentials: Credentials = { username: ' ', token: ' ' };
     const data = {
       username: context.username,
       password: context.password
     };
     this.httpClient
-      .post<any>(`${environment.secureUserApi}/authenticate`, data)
+      .post<User>(`${environment.secureUserApi}/authenticate`, data)
       .pipe(
-        map(user => {
+        map(theUser => {
           // login successful if there's a jwt token in the response
-          if (user && user.token) {
-            this.credentialsService.setCredentials(user.username, user.token);
-            this.token = user.token;
-            log.debug(`User from server: ********** ` + user);
+          if (theUser && theUser.token) {
+            credentials.username = theUser.name;
+            credentials.token = theUser.token;
+            this.credentialsService.setCredentials(credentials, true);
+            log.debug(`User from server: ********** ` + credentials.token);
           } else {
             log.debug(`Error on login in `);
           }
         })
       )
       .subscribe(
-        credentials => {
-          log.debug(` credential.token: ${credentials} successfully logged in`);
+        theCredentials => {
+          log.debug(` credential.token: ${theCredentials} successfully logged in`);
           this.router.navigate([this.route.snapshot.queryParams.redirect || '/'], { replaceUrl: true });
         },
         error => {

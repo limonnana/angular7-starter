@@ -4,6 +4,7 @@ export class User {
   phone: string;
   email: string;
   password: string;
+  token: string;
   created: string;
   modified: string;
   updatedAt: Date;
