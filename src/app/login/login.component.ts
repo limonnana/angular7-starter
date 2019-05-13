@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthenticateService } from '@app/core/authentication/authenticate.service';
 import { environment } from '@env/environment';
 import { Logger, I18nService, Credentials } from '@app/core';
+import { CredentialsService } from '@app/core/authentication/credentials.service';
 
 const log = new Logger('Login');
 
@@ -24,7 +25,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private i18nService: I18nService,
-    private authenticateService: AuthenticateService
+    private authenticateService: AuthenticateService,
+    private credentialsService: CredentialsService
   ) {
     this.createForm();
   }
@@ -47,7 +49,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
       ); */
     log.debug(` credential.token: ${credentials.token} `);
-    this.router.navigate([this.route.snapshot.queryParams.redirect || '/'], { replaceUrl: true });
+    // this.router.navigate([this.route.snapshot.queryParams.redirect || '/'], { replaceUrl: true });
   }
 
   setLanguage(language: string) {

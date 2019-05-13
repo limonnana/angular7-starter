@@ -7,6 +7,7 @@ import { environment } from '@env/environment';
 import { map } from 'rxjs/operators';
 import { Logger } from '../logger.service';
 import { User } from '@app/entities/user';
+import { Router, ActivatedRoute } from '@angular/router';
 
 const log = new Logger('AuthenticateService');
 
@@ -17,7 +18,12 @@ export class AuthenticateService {
   error: string | undefined;
   private credentials: Credentials = { username: ' ', token: ' ' };
 
-  constructor(private credentialsService: CredentialsService, private httpClient: HttpClient) {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private credentialsService: CredentialsService,
+    private httpClient: HttpClient
+  ) {}
 
   login(context: LoginContext): Credentials {
     const data = {
@@ -41,7 +47,7 @@ export class AuthenticateService {
             this.credentials.username = user.name;
             this.credentials.token = user.token;
             this.credentialsService.setCredentials(this.credentials, data.remember);
-            log.debug('is logged:' + this.credentialsService.isAuthenticated());
+            this.router.navigate([this.route.snapshot.queryParams.redirect || '/'], { replaceUrl: true });
           } else {
             log.debug(`Error on login in `);
           }
