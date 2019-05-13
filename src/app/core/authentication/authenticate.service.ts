@@ -6,6 +6,7 @@ import { Observable, of } from 'rxjs';
 import { environment } from '@env/environment';
 import { map } from 'rxjs/operators';
 import { Logger } from '../logger.service';
+import { User } from '@app/entities/user';
 
 const log = new Logger('AuthenticateService');
 
@@ -13,38 +14,48 @@ const log = new Logger('AuthenticateService');
   providedIn: 'root'
 })
 export class AuthenticateService {
-  // private _credentials: Credentials | null = null;
+  error: string | undefined;
+  private credentials: Credentials = { username: ' ', token: ' ' };
 
   constructor(private credentialsService: CredentialsService, private httpClient: HttpClient) {}
 
-  login(context: LoginContext): Observable<Credentials> {
-    let token: 'not defined yet';
+  login(context: LoginContext): Credentials {
     const data = {
+      username: context.username,
+      password: context.password,
+      remember: context.remember
+    };
+    const auth = {
       username: context.username,
       password: context.password
     };
 
-    //  log.debug(`data:` + data.password + ' , ' + data.password + ' ' + environment.secureUserApi);
-
-    this.httpClient.post<any>(`${environment.secureUserApi}/authenticate`, data).pipe(
-      map(user => {
-        // login successful if there's a jwt token in the response
-        if (user && user.token) {
-          this.credentialsService.setCredentials(user.username, user.token);
-          token = user.token;
-          log.debug(`User from server: ********** ` + user);
-        } else {
-          log.debug(`Error on login in `);
+    this.httpClient
+      .post<User>(`${environment.secureUserApi}/authenticate`, auth)
+      .pipe(
+        map(user => {
+          log.debug(' User: ' + user);
+          // login successful if there's a jwt token in the response
+          log.debug('User.token: ' + user.token);
+          if (user && user.token) {
+            this.credentials.username = user.name;
+            this.credentials.token = user.token;
+            this.credentialsService.setCredentials(this.credentials, data.remember);
+            log.debug('is logged:' + this.credentialsService.isAuthenticated());
+          } else {
+            log.debug(`Error on login in `);
+          }
+        })
+      )
+      .subscribe(
+        theCredentials => {
+          log.debug(` credential.token: ${this.credentials.token} successfully logged in`);
+        },
+        error => {
+          log.debug(`Login error: ${error}`);
+          this.error = error;
         }
-      })
-    );
-
-    const credentials = {
-      username: context.username,
-      token: token
-    };
-    // this._credentials = JSON.parse('{username:' + context.username + ', token:' +  token + '}');
-
-    return of(credentials);
+      );
+    return this.credentials;
   }
 }

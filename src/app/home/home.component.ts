@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { finalize } from 'rxjs/operators';
+import { CredentialsService } from '@app/core';
 
 @Component({
   selector: 'app-home',
@@ -9,21 +9,14 @@ import { finalize } from 'rxjs/operators';
 export class HomeComponent implements OnInit {
   quote: string | undefined;
   isLoading = false;
+  name: string | undefined;
 
-  constructor() {}
+  constructor(private credentialsService: CredentialsService) {}
 
   ngOnInit() {
     this.isLoading = true;
     this.quote = 'Nice to see you again';
-    this.sleepExample();
     this.isLoading = false;
-  }
-
-  private async sleepExample() {
-    await this.delay(100000);
-  }
-
-  private delay(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    this.name = this.credentialsService.credentials.username;
   }
 }

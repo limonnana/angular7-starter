@@ -7,6 +7,7 @@ export interface Credentials {
 }
 
 const credentialsKey = 'credentials';
+const nameKey = 'name';
 
 /**
  * Provides storage for authentication credentials.
@@ -56,5 +57,9 @@ export class CredentialsService {
       sessionStorage.removeItem(credentialsKey);
       localStorage.removeItem(credentialsKey);
     }
+  }
+
+  setName(name: string) {
+    localStorage.setItem(nameKey, name);
   }
 }
