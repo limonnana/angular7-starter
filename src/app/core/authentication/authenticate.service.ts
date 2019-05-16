@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { LoginContext } from './authentication.service';
 import { Credentials, CredentialsService } from './credentials.service';
-import { Observable, of } from 'rxjs';
 import { environment } from '@env/environment';
 import { map } from 'rxjs/operators';
 import { Logger } from '../logger.service';
