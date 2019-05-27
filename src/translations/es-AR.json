@@ -3,5 +3,10 @@
   "Hello world !": "Hola Mundo !",
   "Greetings !": "Hola !",
   "Users": "Usuarios",
-  "About": "Quienes somos"
+  "About": "Quienes somos",
+  "Userame or password icorrect.": "El nombre de usuario o la contraseña son incorrectas.",
+  "Remember me": "Recordarme",
+  "Logged in as": "Logeado como",
+  "Login": "Entrar",
+  "Logout": "Salir"
 }

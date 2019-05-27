@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 import { Logger } from '../logger.service';
 import { User } from '@app/entities/user';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Subject } from 'rxjs';
 
 const log = new Logger('AuthenticateService');
 
@@ -15,7 +16,8 @@ const log = new Logger('AuthenticateService');
 })
 export class AuthenticateService {
   error: string | undefined;
-  private credentials: Credentials = { username: ' ', token: ' ' };
+  private credentials: Credentials = { username: '', token: '' };
+  private logInErrorSubject = new Subject<string>();
 
   constructor(
     private router: Router,
@@ -23,6 +25,10 @@ export class AuthenticateService {
     private credentialsService: CredentialsService,
     private httpClient: HttpClient
   ) {}
+
+  public getLoginErrors(): Subject<string> {
+    return this.logInErrorSubject;
+  }
 
   login(context: LoginContext): Credentials {
     const data = {
@@ -39,7 +45,7 @@ export class AuthenticateService {
       .post<User>(`${environment.secureUserApi}/authenticate`, auth)
       .pipe(
         map(user => {
-          log.debug(' User: ' + user);
+          log.debug(' User: ' + user.name);
           // login successful if there's a jwt token in the response
           log.debug('User.token: ' + user.token);
           if (user && user.token) {
@@ -49,6 +55,7 @@ export class AuthenticateService {
             this.router.navigate([this.route.snapshot.queryParams.redirect || '/'], { replaceUrl: true });
           } else {
             log.debug(`Error on login in `);
+            this.error = 'error';
           }
         })
       )
@@ -59,6 +66,7 @@ export class AuthenticateService {
         error => {
           log.debug(`Login error: ${error}`);
           this.error = error;
+          this.logInErrorSubject.next(error.message);
         }
       );
     return this.credentials;

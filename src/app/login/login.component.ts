@@ -19,6 +19,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   loginForm!: FormGroup;
   isLoading = false;
   token: 'not defined yet';
+  errorMessage: string;
+  wrongCredentials: string | undefined;
 
   constructor(
     private router: Router,
@@ -38,19 +40,34 @@ export class LoginComponent implements OnInit, OnDestroy {
   login() {
     this.isLoading = true;
     const credentials: Credentials = this.authenticateService.login(this.loginForm.value);
-    /*.subscribe(
-        credentials => {
-          log.debug(` credential.token: ${credentials.token} successfully logged in`);
-          this.router.navigate([this.route.snapshot.queryParams.redirect || '/'], { replaceUrl: true });
-        },
-        error => {
-          log.debug(`Login error: ${error}`);
-          this.error = error;
-        }
-      ); */
+
     log.debug(` credential.token: ${credentials.token} `);
-    // this.router.navigate([this.route.snapshot.queryParams.redirect || '/'], { replaceUrl: true });
+    if (credentials.token === '') {
+      this.error = 'wrongCredentials';
+      this.wrongCredentials = 'The username or password are incorrect.';
+      this.isLoading = true;
+    }
   }
+
+  /*
+  login1() {
+    this.isLoading = true;
+    const login$ = this.authenticateService.login(this.loginForm.value);
+    login$.pipe(
+      finalize(() => {
+        this.loginForm.markAsPristine();
+        this.isLoading = false;
+      }),
+      untilDestroyed(this)
+    ).subscribe(credentials => {
+      log.debug(`${credentials.username} successfully logged in`);
+      this.router.navigate([ this.route.snapshot.queryParams.redirect || '/'], { replaceUrl: true });
+    }, error => {
+      log.debug(`Login error: ${error}`);
+      this.error = error;
+    });
+  }
+*/
 
   setLanguage(language: string) {
     this.i18nService.language = language;

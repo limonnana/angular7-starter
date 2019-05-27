@@ -3,6 +3,7 @@ import { UsersService } from '@app/services/users.service';
 import { User } from '@app/entities/user';
 import { first } from 'rxjs/operators';
 import { Logger } from '@app/core/logger.service';
+import { Router, ActivatedRoute } from '@angular/router';
 
 const log = new Logger('UsersComponent');
 
@@ -12,7 +13,7 @@ const log = new Logger('UsersComponent');
   styleUrls: ['./users.component.scss']
 })
 export class UsersComponent implements OnInit {
-  constructor(private usersService: UsersService) {}
+  constructor(private usersService: UsersService, private router: Router, private route: ActivatedRoute) {}
 
   userList: any = [];
 
@@ -35,5 +36,6 @@ export class UsersComponent implements OnInit {
   }
   editUser(user: User) {
     log.debug(user);
+    this.router.navigate([this.route.snapshot.queryParams.redirect || '/user-edit'], { replaceUrl: true });
   }
 }
